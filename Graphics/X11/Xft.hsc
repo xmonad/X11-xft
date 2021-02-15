@@ -1,3 +1,5 @@
+{-# LANGUAGE ForeignFunctionInterface #-}
+
 -----------------------------------------------------------------------------
 -- Module      :  Graphics.X11.Xft
 -- Copyright   :  Clemens Fruhwirth <clemens@endorphin.org> 2007
@@ -7,40 +9,40 @@
 -----------------------------------------------------------------------------
 
 module Graphics.X11.Xft ( XftColor
-			, xftcolor_pixel
-			, allocaXftColor
-			, withXftColorName
-			, withXftColorValue
-			, XftDraw
-			, withXftDraw
-			, xftDrawCreate
-			, xftDrawCreateBitmap
-			, xftDrawCreateAlpha
-			, xftDrawChange
-			, xftDrawDisplay
-			, xftDrawDrawable
-			, xftDrawColormap
-			, xftDrawVisual
-			, xftDrawDestroy
-			, XftFont
-			, xftfont_ascent
-			, xftfont_descent
-			, xftfont_height
-			, xftfont_max_advance_width
-			, xftFontOpen
-			, xftFontOpenXlfd
-			, xftLockFace
-			, xftUnlockFace
-			, xftFontCopy
-			, xftFontClose
-			, xftDrawGlyphs
-			, xftDrawString
-			, xftTextExtents
-			, xftDrawRect
-			, xftDrawSetClipRectangles
-			, xftDrawSetSubwindowMode
-			, xftInitFtLibrary
- 			  )
+                        , xftcolor_pixel
+                        , allocaXftColor
+                        , withXftColorName
+                        , withXftColorValue
+                        , XftDraw
+                        , withXftDraw
+                        , xftDrawCreate
+                        , xftDrawCreateBitmap
+                        , xftDrawCreateAlpha
+                        , xftDrawChange
+                        , xftDrawDisplay
+                        , xftDrawDrawable
+                        , xftDrawColormap
+                        , xftDrawVisual
+                        , xftDrawDestroy
+                        , XftFont
+                        , xftfont_ascent
+                        , xftfont_descent
+                        , xftfont_height
+                        , xftfont_max_advance_width
+                        , xftFontOpen
+                        , xftFontOpenXlfd
+                        , xftLockFace
+                        , xftUnlockFace
+                        , xftFontCopy
+                        , xftFontClose
+                        , xftDrawGlyphs
+                        , xftDrawString
+                        , xftTextExtents
+                        , xftDrawRect
+                        , xftDrawSetClipRectangles
+                        , xftDrawSetSubwindowMode
+                        , xftInitFtLibrary
+                          )
 
 where
 import Graphics.X11
@@ -79,11 +81,11 @@ allocaXftColor = allocaBytes (#size XftColor)
 withXftColorName :: Display -> Visual -> Colormap -> String -> (XftColor -> IO a) -> IO a
 withXftColorName d v cm name f =
     allocaXftColor $ (\color -> do
-	  		withCAString name (\cstring -> do
-					     cXftColorAllocName d v cm cstring color
-					     r <- f color
-					     cXftColorFree d v cm color
-					     return r)) . XftColor
+                        withCAString name (\cstring -> do
+                                             cXftColorAllocName d v cm cstring color
+                                             r <- f color
+                                             cXftColorFree d v cm color
+                                             return r)) . XftColor
 
 foreign import ccall "XftColorAllocValue"
   cXftColorAllocValue :: Display -> Visual -> Colormap -> (Ptr XRenderColor) -> XftColor -> IO (#type Bool)
@@ -91,11 +93,11 @@ foreign import ccall "XftColorAllocValue"
 withXftColorValue :: Display -> Visual -> Colormap -> XRenderColor -> (XftColor -> IO a) -> IO a
 withXftColorValue d v cm rc f =
     allocaXftColor $ (\color -> do
-	  	        with rc (\rc_ptr -> do
-				   cXftColorAllocValue d v cm rc_ptr color
-				   r <- f color
-				   cXftColorFree d v cm color
-				   return r)) . XftColor
+                        with rc (\rc_ptr -> do
+                                   cXftColorAllocValue d v cm rc_ptr color
+                                   r <- f color
+                                   cXftColorFree d v cm color
+                                   return r)) . XftColor
 
 foreign import ccall "XftColorFree"
   cXftColorFree :: Display -> Visual -> Colormap -> XftColor -> IO ()
@@ -237,7 +239,7 @@ xftDrawSetClipRectangles :: XftDraw -> Int -> Int -> [Rectangle] -> IO Bool
 xftDrawSetClipRectangles draw x y rects =
     withArrayLen rects
       (\len rects -> do
-	 r <- cXftDrawSetClipRectangles draw (fi x) (fi y) rects (fi len)
+         r <- cXftDrawSetClipRectangles draw (fi x) (fi y) rects (fi len)
          return (toInteger r /= 0)) -- verify whether this is really the convention
 
 foreign import ccall "XftDrawSetSubwindowMode"
@@ -257,38 +259,38 @@ These functions minimize round-trip between the library and the using program (m
 but otherwise all the functions can be achieved by DrawGlyphs
 
 void
-XftDrawCharSpec (XftDraw		*draw,
-		 _Xconst XftColor	*color,
-		 XftFont		*pub,
-		 _Xconst XftCharSpec	*chars,
-		 int			len);
+XftDrawCharSpec (XftDraw                *draw,
+                 _Xconst XftColor       *color,
+                 XftFont                *pub,
+                 _Xconst XftCharSpec    *chars,
+                 int                    len);
 
 void
-XftDrawCharFontSpec (XftDraw			*draw,
-		     _Xconst XftColor		*color,
-		     _Xconst XftCharFontSpec	*chars,
-		     int			len);
+XftDrawCharFontSpec (XftDraw                    *draw,
+                     _Xconst XftColor           *color,
+                     _Xconst XftCharFontSpec    *chars,
+                     int                        len);
 
 void
-XftDrawGlyphSpec (XftDraw		*draw,
-		  _Xconst XftColor	*color,
-		  XftFont		*pub,
-		  _Xconst XftGlyphSpec	*glyphs,
-		  int			len);
+XftDrawGlyphSpec (XftDraw               *draw,
+                  _Xconst XftColor      *color,
+                  XftFont               *pub,
+                  _Xconst XftGlyphSpec  *glyphs,
+                  int                   len);
 
 void
-XftDrawGlyphFontSpec (XftDraw			*draw,
-		      _Xconst XftColor		*color,
-		      _Xconst XftGlyphFontSpec	*glyphs,
-		      int			len);
+XftDrawGlyphFontSpec (XftDraw                   *draw,
+                      _Xconst XftColor          *color,
+                      _Xconst XftGlyphFontSpec  *glyphs,
+                      int                       len);
 ------
 Missing
 void
-XftGlyphExtents (Display	    *dpy,
-		 XftFont	    *pub,
-		 _Xconst FT_UInt    *glyphs,
-		 int		    nglyphs,
-		 XGlyphInfo	    *extents);
+XftGlyphExtents (Display            *dpy,
+                 XftFont            *pub,
+                 _Xconst FT_UInt    *glyphs,
+                 int                nglyphs,
+                 XGlyphInfo         *extents);
 
 Intentionally Missing Bindings
 xftDrawString8,xftDrawString16,xftDrawString32,xftDrawStringUtf16
@@ -315,9 +317,9 @@ FcBool
 XftFontInfoEqual (_Xconst XftFontInfo *a, _Xconst XftFontInfo *b);
 
 XftFont *
-XftFontOpenInfo (Display	*dpy,
-		 FcPattern	*pattern,
-		 XftFontInfo	*fi);
+XftFontOpenInfo (Display        *dpy,
+                 FcPattern      *pattern,
+                 XftFontInfo    *fi);
 
 XftFont *
 XftFontOpenPattern (Display *dpy, FcPattern *pattern);

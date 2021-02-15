@@ -20,22 +20,21 @@ import Foreign.Storable( Storable(..) )
 
 peekCUShort :: Ptr a -> CInt -> IO Int
 peekCUShort ptr off = do
-	v <- peekByteOff ptr (fromIntegral off)
-	return (fromIntegral (v::CUShort))
+        v <- peekByteOff ptr (fromIntegral off)
+        return (fromIntegral (v::CUShort))
 
 pokeCUShort :: Ptr a -> CInt -> Int -> IO ()
 pokeCUShort ptr off v =
-	pokeByteOff ptr (fromIntegral off) (fromIntegral v::CUShort)
-
-
+        pokeByteOff ptr (fromIntegral off) (fromIntegral v::CUShort)
+        
 peekCShort :: Ptr a -> CInt -> IO Int
 peekCShort ptr off = do
-	v <- peekByteOff ptr (fromIntegral off)
-	return (fromIntegral (v::CShort))
+        v <- peekByteOff ptr (fromIntegral off)
+        return (fromIntegral (v::CShort))
 
 pokeCShort :: Ptr a -> CInt -> Int -> IO ()
 pokeCShort ptr off v =
-	pokeByteOff ptr (fromIntegral off) (fromIntegral v::CShort)
+        pokeByteOff ptr (fromIntegral off) (fromIntegral v::CShort)
 
 data XRenderColor = XRenderColor { 
       xrendercolor_red   :: Int, 
@@ -45,19 +44,19 @@ data XRenderColor = XRenderColor {
 }
 
 instance Storable XRenderColor where
-	sizeOf _ = #{size XRenderColor}
-	alignment _ = alignment (undefined::CInt)
-	peek p = do
-		red   <- peekCUShort p #{offset XRenderColor, red}
-		blue  <- peekCUShort p #{offset XRenderColor, blue}
-		green <- peekCUShort p #{offset XRenderColor, green}
-		alpha <- peekCUShort p #{offset XRenderColor, alpha}
-		return (XRenderColor red blue green alpha)
-	poke p (XRenderColor red blue green alpha) = do
-		pokeCUShort p #{offset XRenderColor,red} red
-		pokeCUShort p #{offset XRenderColor,blue} blue
-		pokeCUShort p #{offset XRenderColor,green} green
-		pokeCUShort p #{offset XRenderColor,alpha} alpha
+        sizeOf _ = #{size XRenderColor}
+        alignment _ = alignment (undefined::CInt)
+        peek p = do
+                red   <- peekCUShort p #{offset XRenderColor, red}
+                blue  <- peekCUShort p #{offset XRenderColor, blue}
+                green <- peekCUShort p #{offset XRenderColor, green}
+                alpha <- peekCUShort p #{offset XRenderColor, alpha}
+                return (XRenderColor red blue green alpha)
+        poke p (XRenderColor red blue green alpha) = do
+                pokeCUShort p #{offset XRenderColor,red} red
+                pokeCUShort p #{offset XRenderColor,blue} blue
+                pokeCUShort p #{offset XRenderColor,green} green
+                pokeCUShort p #{offset XRenderColor,alpha} alpha
 
 data XGlyphInfo = XGlyphInfo { 
       xglyphinfo_width  :: Int, 
@@ -69,23 +68,23 @@ data XGlyphInfo = XGlyphInfo {
 }
 
 instance Storable XGlyphInfo where
-	sizeOf _ = #{size XGlyphInfo}
-	alignment _ = alignment (undefined::CInt)
-	peek p = do
-		width  <- peekCUShort p #{offset XGlyphInfo, width}
-		height <- peekCUShort p #{offset XGlyphInfo, height}
-		x <- peekCShort p #{offset XGlyphInfo, x}
-		y <- peekCShort p #{offset XGlyphInfo, y}
-		xOff <- peekCShort p #{offset XGlyphInfo, xOff}
-		yOff <- peekCShort p #{offset XGlyphInfo, yOff}
-		return (XGlyphInfo width height x y xOff yOff)
-	poke p (XGlyphInfo width height x y xOff yOff) = do
-		pokeCUShort p #{offset XGlyphInfo,width} width
-		pokeCUShort p #{offset XGlyphInfo,height} height
-		pokeCShort p #{offset XGlyphInfo,x} x
-		pokeCShort p #{offset XGlyphInfo,y} y
-		pokeCShort p #{offset XGlyphInfo,xOff} xOff
-		pokeCShort p #{offset XGlyphInfo,yOff} yOff
+        sizeOf _ = #{size XGlyphInfo}
+        alignment _ = alignment (undefined::CInt)
+        peek p = do
+                width  <- peekCUShort p #{offset XGlyphInfo, width}
+                height <- peekCUShort p #{offset XGlyphInfo, height}
+                x <- peekCShort p #{offset XGlyphInfo, x}
+                y <- peekCShort p #{offset XGlyphInfo, y}
+                xOff <- peekCShort p #{offset XGlyphInfo, xOff}
+                yOff <- peekCShort p #{offset XGlyphInfo, yOff}
+                return (XGlyphInfo width height x y xOff yOff)
+        poke p (XGlyphInfo width height x y xOff yOff) = do
+                pokeCUShort p #{offset XGlyphInfo,width} width
+                pokeCUShort p #{offset XGlyphInfo,height} height
+                pokeCShort p #{offset XGlyphInfo,x} x
+                pokeCShort p #{offset XGlyphInfo,y} y
+                pokeCShort p #{offset XGlyphInfo,xOff} xOff
+                pokeCShort p #{offset XGlyphInfo,yOff} yOff
 
 
 data XRenderDirectFormat = XRenderDirectFormat { 
@@ -100,25 +99,24 @@ data XRenderDirectFormat = XRenderDirectFormat {
 }
 
 instance Storable XRenderDirectFormat where
-	sizeOf _ = #{size XRenderDirectFormat}
-	alignment _ = alignment (undefined::CInt)
-	peek p = do
-		red  <- peekCShort p #{offset XRenderDirectFormat, red}
-		redMask  <- peekCShort p #{offset XRenderDirectFormat, redMask}
-		green  <- peekCShort p #{offset XRenderDirectFormat, green}
-		greenMask  <- peekCShort p #{offset XRenderDirectFormat, greenMask}
-		blue  <- peekCShort p #{offset XRenderDirectFormat, blue}
-		blueMask  <- peekCShort p #{offset XRenderDirectFormat, blueMask}
-		alpha  <- peekCShort p #{offset XRenderDirectFormat, alpha}
-		alphaMask  <- peekCShort p #{offset XRenderDirectFormat, alphaMask}
-		return (XRenderDirectFormat red redMask green greenMask blue blueMask alpha alphaMask)
-	poke p (XRenderDirectFormat red redMask green greenMask blue blueMask alpha alphaMask) = do
-		pokeCShort p #{offset XRenderDirectFormat,red} red
-		pokeCShort p #{offset XRenderDirectFormat,redMask} redMask
-		pokeCShort p #{offset XRenderDirectFormat,blue} blue
-		pokeCShort p #{offset XRenderDirectFormat,blueMask} blueMask
-		pokeCShort p #{offset XRenderDirectFormat,green} green
-		pokeCShort p #{offset XRenderDirectFormat,greenMask} greenMask
-		pokeCShort p #{offset XRenderDirectFormat,alpha} alpha
-		pokeCShort p #{offset XRenderDirectFormat,alphaMask} alphaMask
-
+        sizeOf _ = #{size XRenderDirectFormat}
+        alignment _ = alignment (undefined::CInt)
+        peek p = do
+                red  <- peekCShort p #{offset XRenderDirectFormat, red}
+                redMask  <- peekCShort p #{offset XRenderDirectFormat, redMask}
+                green  <- peekCShort p #{offset XRenderDirectFormat, green}
+                greenMask  <- peekCShort p #{offset XRenderDirectFormat, greenMask}
+                blue  <- peekCShort p #{offset XRenderDirectFormat, blue}
+                blueMask  <- peekCShort p #{offset XRenderDirectFormat, blueMask}
+                alpha  <- peekCShort p #{offset XRenderDirectFormat, alpha}
+                alphaMask  <- peekCShort p #{offset XRenderDirectFormat, alphaMask}
+                return (XRenderDirectFormat red redMask green greenMask blue blueMask alpha alphaMask)
+        poke p (XRenderDirectFormat red redMask green greenMask blue blueMask alpha alphaMask) = do
+                pokeCShort p #{offset XRenderDirectFormat,red} red
+                pokeCShort p #{offset XRenderDirectFormat,redMask} redMask
+                pokeCShort p #{offset XRenderDirectFormat,blue} blue
+                pokeCShort p #{offset XRenderDirectFormat,blueMask} blueMask
+                pokeCShort p #{offset XRenderDirectFormat,green} green
+                pokeCShort p #{offset XRenderDirectFormat,greenMask} greenMask
+                pokeCShort p #{offset XRenderDirectFormat,alpha} alpha
+                pokeCShort p #{offset XRenderDirectFormat,alphaMask} alphaMask
