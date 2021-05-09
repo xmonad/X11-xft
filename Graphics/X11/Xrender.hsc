@@ -51,8 +51,8 @@ instance Storable XRenderColor where
                 blue  <- peekCUShort p #{offset XRenderColor, blue}
                 green <- peekCUShort p #{offset XRenderColor, green}
                 alpha <- peekCUShort p #{offset XRenderColor, alpha}
-                return (XRenderColor red blue green alpha)
-        poke p (XRenderColor red blue green alpha) = do
+                return (XRenderColor red green blue alpha)
+        poke p (XRenderColor red green blue alpha) = do
                 pokeCUShort p #{offset XRenderColor,red} red
                 pokeCUShort p #{offset XRenderColor,blue} blue
                 pokeCUShort p #{offset XRenderColor,green} green
