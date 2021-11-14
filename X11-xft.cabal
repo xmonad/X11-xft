@@ -4,7 +4,7 @@ version:       0.3.3
 license:       BSD-3-Clause
 license-file:  LICENSE
 author:        Clemens Fruhwirth
-maintainer:    clemens@endorphin.org
+maintainer:    xmonad@haskell.org
 category:      Graphics
 synopsis:      Bindings to the Xft and some Xrender parts
 description:   A Haskell bindings to the X Font library. With it, Haskell X11
@@ -14,20 +14,15 @@ description:   A Haskell bindings to the X Font library. With it, Haskell X11
 build-type:    Simple
 
 library
-  build-depends:     base < 5, X11>=1.2.1, utf8-string>=0.1
+  build-depends:     base         < 5
+                   , X11         >= 1.2.1
+                   , utf8-string >= 0.1
   ghc-options:       -funbox-strict-fields
   pkgconfig-depends: xft
   other-extensions:  ForeignFunctionInterface
   exposed-modules:   Graphics.X11.Xft, Graphics.X11.Xrender
   default-language:  Haskell98
 
-executable Hello
-  main-is:           Hello.hs
-  build-depends:     base < 5, X11>=1.2.1, utf8-string>=0.1
-  other-modules:     Graphics.X11.Xft, Graphics.X11.Xrender
-  default-language:  Haskell98
-  pkgconfig-depends: xft          
-  
 source-repository head
   type:     git
-  location: https://github.com/clefru/X11-xft.git
+  location: https://github.com/xmonad/X11-xft.git
