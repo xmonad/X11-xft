@@ -42,24 +42,18 @@ module Graphics.X11.Xft ( XftColor
                         , xftDrawSetClipRectangles
                         , xftDrawSetSubwindowMode
                         , xftInitFtLibrary
-                          )
+                        )
+ where
 
-where
 import Graphics.X11
 import Graphics.X11.Xlib.Types
-import Graphics.X11.Xlib.Region
 import Graphics.X11.Xrender
 
-import Foreign
-import Foreign.C.Types
-import Foreign.C.String
-import Foreign.Ptr
-import Foreign.Marshal.Alloc
-import Foreign.Marshal.Array
 import Codec.Binary.UTF8.String as UTF8
-import Data.Int
-import Data.Word
-import Control.Monad
+import Control.Monad (void)
+import Foreign hiding (void)
+import Foreign.C.String
+import Foreign.C.Types
 
 #include <X11/Xft/Xft.h>
 
@@ -69,6 +63,7 @@ import Control.Monad
 
 newtype XftColor = XftColor (Ptr XftColor)
 
+xftcolor_pixel :: XftColor -> IO Int
 xftcolor_pixel (XftColor p) = peekCUShort p #{offset XftColor, pixel}
 -- missing xftcolor_color to get XRenderColor
 
@@ -82,7 +77,7 @@ withXftColorName :: Display -> Visual -> Colormap -> String -> (XftColor -> IO a
 withXftColorName d v cm name f =
     allocaXftColor $ (\color -> do
                         withCAString name (\cstring -> do
-                                             cXftColorAllocName d v cm cstring color
+                                             void $ cXftColorAllocName d v cm cstring color
                                              r <- f color
                                              cXftColorFree d v cm color
                                              return r)) . XftColor
@@ -94,7 +89,7 @@ withXftColorValue :: Display -> Visual -> Colormap -> XRenderColor -> (XftColor 
 withXftColorValue d v cm rc f =
     allocaXftColor $ (\color -> do
                         with rc (\rc_ptr -> do
-                                   cXftColorAllocValue d v cm rc_ptr color
+                                   void $ cXftColorAllocValue d v cm rc_ptr color
                                    r <- f color
                                    cXftColorFree d v cm color
                                    return r)) . XftColor
@@ -125,6 +120,7 @@ foreign import ccall "XftDrawCreateBitmap"
 foreign import ccall "XftDrawCreateAlpha"
   cXftDrawCreateAlpha :: Display -> Pixmap -> CInt -> IO XftDraw
 
+xftDrawCreateAlpha :: Integral a => Display -> Pixmap -> a -> IO XftDraw
 xftDrawCreateAlpha d p i = cXftDrawCreateAlpha d p (fi i)
 
 foreign import ccall "XftDrawChange"
@@ -151,6 +147,7 @@ foreign import ccall "XftDrawDestroy"
 
 newtype XftFont = XftFont (Ptr XftFont)
 
+xftfont_ascent, xftfont_descent, xftfont_height, xftfont_max_advance_width :: XftFont -> IO Int
 xftfont_ascent (XftFont p)            = peekCUShort p #{offset XftFont, ascent}
 xftfont_descent (XftFont p)           = peekCUShort p #{offset XftFont, descent}
 xftfont_height (XftFont p)            = peekCUShort p #{offset XftFont, height}
@@ -161,6 +158,7 @@ xftfont_max_advance_width (XftFont p) = peekCUShort p #{offset XftFont, max_adva
 foreign import ccall "XftFontOpenName"
   cXftFontOpen :: Display -> CInt -> CString -> IO XftFont
 
+xftFontOpen :: Display -> Screen -> String -> IO XftFont
 xftFontOpen dpy screen fontname =
     withCAString fontname $
       \cfontname -> cXftFontOpen dpy (fi (screenNumberOfScreen screen)) cfontname
@@ -168,6 +166,7 @@ xftFontOpen dpy screen fontname =
 foreign import ccall "XftFontOpenXlfd"
   cXftFontOpenXlfd :: Display -> CInt -> CString -> IO XftFont
 
+xftFontOpenXlfd :: Display -> Screen -> String -> IO XftFont
 xftFontOpenXlfd dpy screen fontname =
     withCAString fontname $ \cfontname -> cXftFontOpenXlfd dpy (fi (screenNumberOfScreen screen)) cfontname
 
@@ -192,6 +191,8 @@ foreign import ccall "XftFontClose"
 foreign import ccall "XftDrawGlyphs"
   cXftDrawGlyphs :: XftDraw -> XftColor -> XftFont -> CInt -> CInt -> Ptr (#type FT_UInt) -> CInt -> IO ()
 
+xftDrawGlyphs :: (Integral a, Integral b, Integral c)
+              => XftDraw -> XftColor -> XftFont -> b -> c -> [a] -> IO ()
 xftDrawGlyphs d c f x y glyphs =
     withArrayLen (map fi glyphs)
       (\len ptr -> cXftDrawGlyphs d c f (fi x) (fi y) ptr (fi len))
@@ -199,6 +200,8 @@ xftDrawGlyphs d c f x y glyphs =
 foreign import ccall "XftDrawStringUtf8"
   cXftDrawStringUtf8 :: XftDraw -> XftColor -> XftFont -> CInt -> CInt -> Ptr (#type FcChar8) -> CInt -> IO ()
 
+xftDrawString :: (Integral a, Integral b)
+              => XftDraw -> XftColor -> XftFont -> a -> b -> String -> IO ()
 xftDrawString d c f x y string =
     withArrayLen (map fi (UTF8.encode string))
       (\len ptr -> cXftDrawStringUtf8 d c f (fi x) (fi y) ptr (fi len))
@@ -221,6 +224,8 @@ xftTextExtents d f string =
 foreign import ccall "XftDrawRect"
   cXftDrawRect :: XftDraw -> XftColor -> CInt -> CInt -> CUInt -> CUInt -> IO ()
 
+xftDrawRect :: (Integral a, Integral b, Integral c, Integral d)
+            => XftDraw -> XftColor -> a -> b -> c -> d -> IO ()
 xftDrawRect draw color x y width height =
     cXftDrawRect draw color (fi x) (fi y) (fi width) (fi height)
 
@@ -236,8 +241,8 @@ foreign import ccall "XftDrawSetClipRectangles"
   cXftDrawSetClipRectangles :: XftDraw -> CInt -> CInt -> (Ptr Rectangle) -> CInt -> IO CInt
 
 xftDrawSetClipRectangles :: XftDraw -> Int -> Int -> [Rectangle] -> IO Bool
-xftDrawSetClipRectangles draw x y rects =
-    withArrayLen rects
+xftDrawSetClipRectangles draw x y rectangles =
+    withArrayLen rectangles
       (\len rects -> do
          r <- cXftDrawSetClipRectangles draw (fi x) (fi y) rects (fi len)
          return (toInteger r /= 0)) -- verify whether this is really the convention
@@ -245,6 +250,7 @@ xftDrawSetClipRectangles draw x y rects =
 foreign import ccall "XftDrawSetSubwindowMode"
   cXftDrawSetSubwindowMode :: XftDraw -> CInt -> IO ()
 
+xftDrawSetSubwindowMode :: Integral a => XftDraw -> a -> IO ()
 xftDrawSetSubwindowMode d i = cXftDrawSetSubwindowMode d (fi i)
 
 --------------

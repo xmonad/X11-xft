@@ -6,15 +6,18 @@
 --
 -----------------------------------------------------------------------------
 
-module Graphics.X11.Xrender
-where
-import Graphics.X11
-import Graphics.X11.Xlib.Types
+module Graphics.X11.Xrender (
+  peekCUShort,
+  pokeCUShort,
+  peekCShort,
+  pokeCShort,
+  XRenderColor (..),
+  XGlyphInfo (..),
+  XRenderDirectFormat (..),
+) where
+
 import Foreign
 import Foreign.C
-import Foreign.C.Types
-import Foreign.Ptr
-import Foreign.Storable( Storable(..) )
 
 #include <X11/extensions/Xrender.h>
 
@@ -26,7 +29,7 @@ peekCUShort ptr off = do
 pokeCUShort :: Ptr a -> CInt -> Int -> IO ()
 pokeCUShort ptr off v =
         pokeByteOff ptr (fromIntegral off) (fromIntegral v::CUShort)
-        
+
 peekCShort :: Ptr a -> CInt -> IO Int
 peekCShort ptr off = do
         v <- peekByteOff ptr (fromIntegral off)
@@ -36,11 +39,11 @@ pokeCShort :: Ptr a -> CInt -> Int -> IO ()
 pokeCShort ptr off v =
         pokeByteOff ptr (fromIntegral off) (fromIntegral v::CShort)
 
-data XRenderColor = XRenderColor { 
-      xrendercolor_red   :: Int, 
-      xrendercolor_green :: Int, 
-      xrendercolor_blue  :: Int, 
-      xrendercolor_alpha :: Int 
+data XRenderColor = XRenderColor {
+      xrendercolor_red   :: Int,
+      xrendercolor_green :: Int,
+      xrendercolor_blue  :: Int,
+      xrendercolor_alpha :: Int
 }
 
 instance Storable XRenderColor where
@@ -58,12 +61,12 @@ instance Storable XRenderColor where
                 pokeCUShort p #{offset XRenderColor,green} green
                 pokeCUShort p #{offset XRenderColor,alpha} alpha
 
-data XGlyphInfo = XGlyphInfo { 
-      xglyphinfo_width  :: Int, 
-      xglyphinfo_height :: Int, 
-      xglyphinfo_x      :: Int, 
-      xglyphinfo_y      :: Int, 
-      xglyphinfo_xOff   :: Int, 
+data XGlyphInfo = XGlyphInfo {
+      xglyphinfo_width  :: Int,
+      xglyphinfo_height :: Int,
+      xglyphinfo_x      :: Int,
+      xglyphinfo_y      :: Int,
+      xglyphinfo_xOff   :: Int,
       xglyphinfo_yOff   :: Int
 }
 
@@ -87,7 +90,7 @@ instance Storable XGlyphInfo where
                 pokeCShort p #{offset XGlyphInfo,yOff} yOff
 
 
-data XRenderDirectFormat = XRenderDirectFormat { 
+data XRenderDirectFormat = XRenderDirectFormat {
      xrenderdirectformat_red       :: Int,
      xrenderdirectformat_redMask   :: Int,
      xrenderdirectformat_green     :: Int,
