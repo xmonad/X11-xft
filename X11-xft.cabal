@@ -1,7 +1,7 @@
 cabal-version: 2.2
 name:          X11-xft
 version:       0.3.3
-license:       LGPL-2.1-only
+license:       BSD-3-Clause
 license-file:  LICENSE
 author:        Clemens Fruhwirth
 maintainer:    clemens@endorphin.org
