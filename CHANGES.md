@@ -15,6 +15,6 @@
     `xftfont_max_height` to gain information about a non-empty list of
     `XftFont`s.
 
-## 0.3.3 (2021-05-09)
+## 0.3.3 (2021-12-01)
 
   * Fixed flipped green/blue values in XRenderColor.
