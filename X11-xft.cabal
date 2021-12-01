@@ -1,6 +1,6 @@
 cabal-version: 2.2
 name:          X11-xft
-version:       0.3.3
+version:       0.3.3.9
 license:       BSD-3-Clause
 license-file:  LICENSE
 author:        Clemens Fruhwirth
