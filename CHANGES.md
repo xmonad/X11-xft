@@ -11,7 +11,7 @@
     possibly uses different fonts for different parts of the string and
     returns the accumulative extents.
 
-  * Added the functions `xftfont_max_ascent`, `xftfont_min_descent`, and
+  * Added the functions `xftfont_max_ascent`, `xftfont_max_descent`, and
     `xftfont_max_height` to gain information about a non-empty list of
     `XftFont`s.
 

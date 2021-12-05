@@ -28,7 +28,7 @@ module Graphics.X11.Xft ( XftColor
                         , xftfont_ascent
                         , xftfont_max_ascent
                         , xftfont_descent
-                        , xftfont_min_descent
+                        , xftfont_max_descent
                         , xftfont_height
                         , xftfont_max_height
                         , xftfont_max_advance_width
@@ -197,8 +197,8 @@ foreign import ccall "XftFontClose"
 xftfont_max_ascent :: NonEmpty XftFont -> IO Int
 xftfont_max_ascent = fmap maximum . mapM xftfont_ascent
 
-xftfont_min_descent :: NonEmpty XftFont -> IO Int
-xftfont_min_descent = fmap minimum . mapM xftfont_descent
+xftfont_max_descent :: NonEmpty XftFont -> IO Int
+xftfont_max_descent = fmap maximum . mapM xftfont_descent
 
 xftfont_max_height :: NonEmpty XftFont -> IO Int
 xftfont_max_height = fmap maximum . mapM xftfont_height
