@@ -1,6 +1,6 @@
 # Change Log / Release Notes
 
-## unknown
+## 0.3.4 (2021-12-11)
 
   * Dropped support for GHC 7.10.
 
