@@ -7,6 +7,7 @@ apt:
   libxft-dev
 
 github-patches:
+  .github/workflows/haskell-ci-dependabot.patch
   .github/workflows/haskell-ci-hackage.patch
 
 raw-project
