@@ -51,14 +51,14 @@ instance Storable XRenderColor where
         alignment _ = alignment (undefined::CInt)
         peek p = do
                 red   <- peekCUShort p #{offset XRenderColor, red}
-                blue  <- peekCUShort p #{offset XRenderColor, blue}
                 green <- peekCUShort p #{offset XRenderColor, green}
+                blue  <- peekCUShort p #{offset XRenderColor, blue}
                 alpha <- peekCUShort p #{offset XRenderColor, alpha}
                 return (XRenderColor red green blue alpha)
         poke p (XRenderColor red green blue alpha) = do
                 pokeCUShort p #{offset XRenderColor,red} red
-                pokeCUShort p #{offset XRenderColor,blue} blue
                 pokeCUShort p #{offset XRenderColor,green} green
+                pokeCUShort p #{offset XRenderColor,blue} blue
                 pokeCUShort p #{offset XRenderColor,alpha} alpha
 
 data XGlyphInfo = XGlyphInfo {
