@@ -59,8 +59,9 @@ import Control.Arrow ((&&&))
 import Control.Monad (void)
 import Data.Char (ord)
 import Data.Function (on)
-import Data.List (groupBy, foldl')
+import Data.List (foldl')
 import Data.List.NonEmpty (NonEmpty)
+import qualified Data.List.NonEmpty as NonEmpty
 import Foreign hiding (void)
 import Foreign.C.String
 import Foreign.C.Types
@@ -291,8 +292,8 @@ getChunks disp fts xInit yInit str = do
         -- Determine which glyph can be rendered by current font
         glyphs <- mapM (xftCharExists disp ft) s
         -- Split string into parts that return "can/cannot be rendered"
-        let splits = map (fst . head &&& map snd)
-                   . groupBy ((==) `on` fst)
+        let splits = map (fst . NonEmpty.head &&& map snd . NonEmpty.toList)
+                   . (NonEmpty.groupBy ((==) `on` fst))
                    $ zip glyphs s
         -- Determine which font to render each chunk with
         concat <$> mapM (getFont fonts) splits
