@@ -34,6 +34,12 @@ library
   if flag(pedantic)
     ghc-options:      -Werror
 
+  -- Keep this in sync with the oldest version in 'tested-with'
+  if impl(ghc > 8.0.2)
+     -- don't treat unused-imports warning as errors, they may be necessary
+     -- for compatibility with older versions of base (or other deps)
+     ghc-options: -Wwarn=unused-imports
+
 source-repository head
   type:     git
   location: https://github.com/xmonad/X11-xft.git
