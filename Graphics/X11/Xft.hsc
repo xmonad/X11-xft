@@ -73,7 +73,7 @@ import Foreign.C.Types
 -- I wonder how many times this has been reinvented...
 -- (upstream won't accept it because of the GHCisms, I suspect)
 throwIfNullXft :: Coercible a (Ptr b) => String -> IO a -> IO a
-throwIfNullXft fn op = fmap coerce $ throwIfNull fn (fmap coerce op)
+throwIfNullXft fn op = coerce $ throwIfNull fn (coerce op)
 
 -----------------------
 -- Color Handling    --
