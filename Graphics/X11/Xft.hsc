@@ -1,4 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 -----------------------------------------------------------------------------
 -- Module      :  Graphics.X11.Xft
@@ -58,6 +59,7 @@ import Codec.Binary.UTF8.String as UTF8
 import Control.Arrow ((&&&))
 import Control.Monad (void)
 import Data.Char (ord)
+import Data.Coerce (coerce, Coercible)
 import Data.Function (on)
 import Data.List (foldl')
 import Data.List.NonEmpty (NonEmpty)
@@ -67,6 +69,11 @@ import Foreign.C.String
 import Foreign.C.Types
 
 #include <X11/Xft/Xft.h>
+
+-- I wonder how many times this has been reinvented...
+-- (upstream won't accept it because of the GHCisms, I suspect)
+throwIfNullXft :: Coercible a (Ptr b) => String -> IO a -> IO a
+throwIfNullXft fn op = fmap coerce $ throwIfNull fn (fmap coerce op)
 
 -----------------------
 -- Color Handling    --
@@ -172,14 +179,15 @@ foreign import ccall "XftFontOpenName"
 xftFontOpen :: Display -> Screen -> String -> IO XftFont
 xftFontOpen dpy screen fontname =
     withCAString fontname $
-      \cfontname -> cXftFontOpen dpy (fi (screenNumberOfScreen screen)) cfontname
+      \cfontname -> throwIfNullXft "xftFontOpen" $ cXftFontOpen dpy (fi (screenNumberOfScreen screen)) cfontname
 
 foreign import ccall "XftFontOpenXlfd"
   cXftFontOpenXlfd :: Display -> CInt -> CString -> IO XftFont
 
 xftFontOpenXlfd :: Display -> Screen -> String -> IO XftFont
 xftFontOpenXlfd dpy screen fontname =
-    withCAString fontname $ \cfontname -> cXftFontOpenXlfd dpy (fi (screenNumberOfScreen screen)) cfontname
+    withCAString fontname $ \cfontname -> throwIfNullXft "xftFontOpenXlfd" $
+      cXftFontOpenXlfd dpy (fi (screenNumberOfScreen screen)) cfontname
 
 foreign import ccall "XftLockFace"
   xftLockFace :: XftFont -> IO ()                  -- FIXME XftLockFace returns FT_face not void
