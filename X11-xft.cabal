@@ -12,7 +12,7 @@ description:   A Haskell bindings to the X Font library. With it, Haskell X11
                fonts with anti-aliasing and subpixel rendering. The bindings
                also provide minimal bindings to Xrender parts.
 build-type:    Simple
-tested-with:   GHC == 8.0.2 || == 8.2.2 || == 8.4.4 || == 8.6.5 || == 8.8.4 || == 8.10.7 || == 9.0.2 || == 9.2.8 || == 9.4.8 || == 9.6.7 || == 9.8.4 || == 9.10.2 || == 9.12.2
+tested-with:   GHC == 8.0.2 || == 8.2.2 || == 8.4.4 || == 8.6.5 || == 8.8.4 || == 8.10.7 || == 9.0.2 || == 9.2.8 || == 9.4.8 || == 9.6.7 || == 9.8.4 || == 9.10.3 || == 9.12.2
 extra-source-files: CHANGES.md
                     README.md
 
