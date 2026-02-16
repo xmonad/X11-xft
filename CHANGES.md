@@ -1,5 +1,11 @@
 # Change Log / Release Notes
 
+## _unreleased_
+
+  * `xftOpenFont` and `xftOpenFontXlfd` now throw exceptions if opening a
+    font fails. (They used to return a null pointer, usually leading to
+    crashes.)
+
 ## 0.3.4 (2021-12-11)
 
   * Dropped support for GHC 7.10.
