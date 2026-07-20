@@ -58,6 +58,7 @@ import Codec.Binary.UTF8.String as UTF8
 import Control.Arrow ((&&&))
 import Control.Monad (void)
 import Data.Char (ord)
+import Data.Coerce (coerce)
 import Data.Function (on)
 import Data.List (foldl')
 import Data.List.NonEmpty (NonEmpty)
@@ -171,15 +172,16 @@ foreign import ccall "XftFontOpenName"
 
 xftFontOpen :: Display -> Screen -> String -> IO XftFont
 xftFontOpen dpy screen fontname =
-    withCAString fontname $
-      \cfontname -> cXftFontOpen dpy (fi (screenNumberOfScreen screen)) cfontname
+    withCAString fontname $ \cfontname -> coerce (throwIfNull "xftFontOpen") $
+      cXftFontOpen dpy (fi (screenNumberOfScreen screen)) cfontname
 
 foreign import ccall "XftFontOpenXlfd"
   cXftFontOpenXlfd :: Display -> CInt -> CString -> IO XftFont
 
 xftFontOpenXlfd :: Display -> Screen -> String -> IO XftFont
 xftFontOpenXlfd dpy screen fontname =
-    withCAString fontname $ \cfontname -> cXftFontOpenXlfd dpy (fi (screenNumberOfScreen screen)) cfontname
+    withCAString fontname $ \cfontname -> coerce (throwIfNull "xftFontOpenXlfd") $
+      cXftFontOpenXlfd dpy (fi (screenNumberOfScreen screen)) cfontname
 
 foreign import ccall "XftLockFace"
   xftLockFace :: XftFont -> IO ()                  -- FIXME XftLockFace returns FT_face not void
